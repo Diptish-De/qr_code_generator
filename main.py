@@ -54,10 +54,26 @@ def generate_qr(
 
 
 if __name__ == "__main__":
-    generate_qr(
-        data="https://github.com/your-username",
-        fill_color="#7F00FF",
-        back_color="#000000",
-        output_file="styled_qr.png",
-        logo_path=None  # add path if you want a logo
-    )
+    print("🔳 QR Code Generator")
+    print("-" * 30)
+    
+    # Get URL from user
+    url = input("Enter the URL or text for QR code: ").strip()
+    
+    if not url:
+        print("❌ No input provided. Exiting.")
+    else:
+        # Optional: Ask for custom filename
+        filename = input("Enter filename (press Enter for 'qr_code.png'): ").strip()
+        if not filename:
+            filename = "qr_code.png"
+        elif not filename.endswith(".png"):
+            filename += ".png"
+        
+        generate_qr(
+            data=url,
+            fill_color="#7F00FF",
+            back_color="#000000",
+            output_file=filename,
+            logo_path=None
+        )
