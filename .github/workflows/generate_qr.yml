@@ -1,0 +1,73 @@
+name: 🔳 Generate QR Code
+
+on:
+  workflow_dispatch:
+    inputs:
+      data:
+        description: 'URL or text to encode'
+        required: true
+        default: 'https://github.com'
+        type: string
+      theme:
+        description: 'Color theme'
+        required: true
+        default: '5'
+        type: choice
+        options:
+          - '1 - Neon Purple'
+          - '2 - Ocean Blue'
+          - '3 - Sunset'
+          - '4 - Matrix'
+          - '5 - Classic (Black/White)'
+          - '6 - Pink Dream'
+          - '7 - Gradient Ocean'
+          - '8 - Gradient Fire'
+      style:
+        description: 'QR code style'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - '1 - Square (Classic)'
+          - '2 - Rounded'
+          - '3 - Circle'
+          - '4 - Vertical Bars'
+          - '5 - Horizontal Bars'
+          - '6 - Gapped Square'
+      filename:
+        description: 'Output filename (without extension)'
+        required: false
+        default: 'qr_code'
+        type: string
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: 📦 Install dependencies
+        run: |
+          pip install qrcode[pil] pillow
+      
+      - name: 🔳 Generate QR Code
+        run: |
+          python generate_qr_cli.py \
+            --data "${{ github.event.inputs.data }}" \
+            --theme "${{ github.event.inputs.theme }}" \
+            --style "${{ github.event.inputs.style }}" \
+            --output "${{ github.event.inputs.filename || 'qr_code' }}.png"
+      
+      - name: 📤 Upload QR Code as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qr-code-${{ github.run_number }}
+          path: "*.png"
+          retention-days: 30
